@@ -96,16 +96,8 @@ end
 
 J = (1 / m) * J;
 
-
-
-
-
-
-
-
-
-
-
+% Compute the regularization parameter (excluding the bias unit)
+J = J + (lambda / (2 * m)) * (sum(sum(Theta1(:, 2:end) .^ 2)) + sum(sum(Theta2(:, 2:end) .^ 2)));
 
 
 
