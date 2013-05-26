@@ -16,9 +16,11 @@ function [J grad] = nnCostFunction(nn_params, ...
 
 % Reshape nn_params back into the parameters Theta1 and Theta2, the weight matrices
 % for our 2 layer neural network
+% 25 x 401
 Theta1 = reshape(nn_params(1:hidden_layer_size * (input_layer_size + 1)), ...
                  hidden_layer_size, (input_layer_size + 1));
 
+% 10 x 26
 Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):end), ...
                  num_labels, (hidden_layer_size + 1));
 
@@ -62,8 +64,37 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+% Turn y from a column vector like this [1; 1; 3; 4]
+% to  [1 0 0 0 0 0 0 0 0 0]
+%     [1 0 0 0 0 0 0 0 0 0]
+%     [0 0 1 0 0 0 0 0 0 0]
+%     [0 0 0 1 0 0 0 0 0 0]
+% Y is a 5000 x 10 matrix.
+Y = [];
+for i = 1:length(y)
+    temp = zeros(1, num_labels);       % create a row vector of zeros
+    temp(y(i)) = 1;   % turn on the flag for the value
+    if length(Y) == 0
+        Y = temp;
+    else
+        Y = [Y; temp];
+    end
+end
 
+% Use forward propagation to compute the values of a3
+X = [ones(size(X, 1), 1) X]; % 5000 x 401
+a2 = sigmoid(X * Theta1');
+a2 = [ones(size(a2, 1), 1) a2];
+a3 = sigmoid(a2 * Theta2'); % 5000 x 10
 
+% Compute the cost function and the regularization parameter
+for i = 1:m
+    for k = 1:num_labels
+        J += -Y(i, k) * log(a3(i, k)) - (1 - Y(i, k)) * log(1 - a3(i, k));
+    end
+end
+
+J = (1 / m) * J;
 
 
 
