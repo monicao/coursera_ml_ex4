@@ -117,9 +117,17 @@ for t = 1:m
 end
 
 
-Theta2_grad = 1 / m * Theta2_grad;
-Theta1_grad = 1 / m * Theta1_grad;
+Theta2_grad = 1 / m * Theta2_grad; % 10 x 26
+Theta1_grad = 1 / m * Theta1_grad; % 25 x 401
 
+% Regularize the gradient
+reg = lambda / m * Theta2; 
+reg(:, 1) = zeros(size(reg, 1), 1); % don't regularize the the first column of theta
+Theta2_grad = Theta2_grad + reg;
+
+reg = lambda / m * Theta1;
+reg(:, 1) = zeros(size(reg, 1), 1);
+Theta1_grad = Theta1_grad + reg;
 
 
 
