@@ -99,6 +99,26 @@ J = (1 / m) * J;
 % Compute the regularization parameter (excluding the bias unit)
 J = J + (lambda / (2 * m)) * (sum(sum(Theta1(:, 2:end) .^ 2)) + sum(sum(Theta2(:, 2:end) .^ 2)));
 
+% Compute the gradients using backpropagation
+for t = 1:m
+    a1 = X(t, :); % 1 x 401
+    z2 = a1 * Theta1'; % 1 x 25
+    a2 = sigmoid(z2); % 1 x 25
+    a2 = [1 a2];     % 1 x 26  - add the bias unit
+    z3 = a2 * Theta2'; % 1 x 10
+    a3 = sigmoid(z3); % 1 x 10
+
+    d3 = a3 - Y(t, :); % 1 x 10
+    d2 = d3 * Theta2 .* sigmoidGradient([ones(size(z2, 1), 1) z2]); % (1 x 10 * 10 x 26) .* 1 x 26
+
+    Theta1_grad = Theta1_grad + (d2(2: end))' * a1; % 25 x 401
+    Theta2_grad = Theta2_grad + d3' * a2; % 10 x 26    10 x 26 + (1 x 10 * 26 x 1)
+    
+end
+
+
+Theta2_grad = 1 / m * Theta2_grad;
+Theta1_grad = 1 / m * Theta1_grad;
 
 
 
